@@ -10,8 +10,9 @@ const notesSchema = new Schema(
 			required: false,
 		}, tag: {
 			type: String,
-			required: true,
+			required: false,
 			enum: ['Shopping', 'Meeting', 'Travel', 'Health', 'Work', 'Finance', 'Personal', 'Ideas', 'Important', 'Todo'],
+			default: 'Todo',
 		},
 	}, {
 	timestamps: true,
