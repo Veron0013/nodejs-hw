@@ -1,66 +1,28 @@
 import express from 'express';
 import cors from 'cors';
-import pino from 'pino-http';
 import 'dotenv/config';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { logger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import notesRoutes from './routes/notesRoutes.js';
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
-
+app.use(logger);
 
 const PORT = process.env.PORT ?? 3030;
 
-app.use(
-	pino({
-		level: 'info',
-		transport: {
-			target: 'pino-pretty',
-			options: {
-				colorize: true,
-				translateTime: 'HH:MM:ss',
-				ignore: 'pid,hostname',
-				messageFormat: '{req.method} {req.url} {res.statusCode} - {responseTime}ms',
-				hideObject: true,
-			},
-		},
-	}),
-);
+app.use(notesRoutes);
 
-// Реалізований маршрут GET /notes
-app.get('/notes', (req, res) => {
-	console.log(req.body); // тепер тіло доступне як JS-об’єкт
-	res.status(200).json({ message: 'Retrieved all notes' });
-});
+//DB
+await connectMongoDB();
 
-// Реалізований маршрут GET /notes/:noteId
-app.get('/notes/:noteId', (req, res) => {
-	//const noteId = Number(req.params.noteId);
-	const noteId = req.params.noteId;
-	//string=null
-	res.status(200).json({
-		message: `Retrieved note with ID: ${noteId}`
-	});
-});
-
-//Реалізований маршрут GET /test-error
-app.get('/test-error', (req, res) => {
-	throw new Error('Simulated server error');
-});
-
-// Middleware для обробки помилок 404
-app.use((req, res) => {
-	res.status(404).json({ message: 'Route not found' });
-});
-
-// Middleware для обробки помилок 500
-app.use((err, req, res, next) => {
-	//console.error('Error:', err.message);
-	res.status(500).json({
-		message: 'Simulated server error',
-		//error: err.message,
-	});
-});
+//MW
+app.use(errorHandler);
+app.use(notFoundHandler);
 
 // Запуск сервера
 app.listen(PORT, () => {
