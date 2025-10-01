@@ -21,8 +21,8 @@ app.use(notesRoutes);
 await connectMongoDB();
 
 //MW
-app.use(errorHandler);
 app.use(notFoundHandler);
+app.use(errorHandler);
 
 // Запуск сервера
 app.listen(PORT, () => {

@@ -9,14 +9,20 @@ export const getAllNotes = async (req, res) => {
 
 export const getNoteById = async (req, res, next) => {
 	const { noteId } = req.params;
-	const note = await Note.findById(noteId);
 
-	if (!note) {
-		next(createHttpError(404, get_404_ById(noteId)));
-		return;
+	try {
+		const note = await Note.findById(noteId);
+
+		if (!note) {
+			next(get_404_ById(noteId));
+			return;
+		}
+
+		res.status(200).json(note);
+	} catch (error) {
+		next(error)
 	}
 
-	res.status(200).json(note);
 };
 
 export const createNote = async (req, res) => {
@@ -26,33 +32,43 @@ export const createNote = async (req, res) => {
 
 export const deleteNote = async (req, res, next) => {
 	const { noteId } = req.params;
-	const deletedNote = await Note.findOneAndDelete({
-		_id: noteId,
-	});
 
-	if (!deletedNote) {
-		next(createHttpError(404, get_404_ById(noteId)));
-		return;
+	try {
+		const deletedNote = await Note.findOneAndDelete({
+			_id: noteId,
+		});
+
+		if (!deletedNote) {
+			next(get_404_ById(noteId));
+			return;
+		}
+
+		res.status(200).json(deletedNote);
+	} catch (error) {
+		next(error)
 	}
-
-	res.status(200).send(deletedNote);
 };
 
 export const updateNote = async (req, res, next) => {
 	const { noteId } = req.params;
 
-	const updatedNote = await Note.findOneAndUpdate(
-		{ _id: noteId },
-		req.body,
-		{ new: true },
-	);
+	try {
+		const updatedNote = await Note.findOneAndUpdate(
+			{ _id: noteId },
+			req.body,
+			{ new: true },
+		);
 
-	if (!updatedNote) {
-		next(createHttpError(404, get_404_ById(noteId)));
-		return;
+		if (!updatedNote) {
+			next(get_404_ById(noteId));
+			return;
+		}
+
+		res.status(200).json(updatedNote);
+	} catch (error) {
+		next(error)
+
 	}
-
-	res.status(200).json(updatedNote);
 };
 
 const get_404_ById = (noteId) => {
