@@ -6,6 +6,7 @@ import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notesRoutes from './routes/notesRoutes.js';
+import { errors } from 'celebrate';
 
 const app = express();
 
@@ -17,12 +18,13 @@ const PORT = process.env.PORT ?? 3030;
 
 app.use(notesRoutes);
 
-//DB
-await connectMongoDB();
-
 //MW
 app.use(notFoundHandler);
+app.use(errors());
 app.use(errorHandler);
+
+//DB
+await connectMongoDB();
 
 // Запуск сервера
 app.listen(PORT, () => {
