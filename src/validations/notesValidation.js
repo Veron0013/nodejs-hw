@@ -7,7 +7,7 @@ const objectIdValidator = (value, helpers) => {
 	return !isValidObjectId(value) ? helpers.message(`Invalid id format ${value}`) : value;
 }
 
-export const notesIdSchema = {
+export const noteIdSchema = {
 	[Segments.PARAMS]: Joi.object({
 		noteId: Joi.string().custom(objectIdValidator).required(),
 	}),
@@ -22,7 +22,7 @@ export const createNoteSchema = {
 			"string.max": "Title should have at most {#limit} characters",
 			"any.required": "Title is required",
 		}),
-		content: Joi.string().min(0).messages({
+		content: Joi.string().allow("").messages({
 			"string.base": "Content must be a string",
 			"string.min": "Content should have at least {#limit} characters",
 		}),
@@ -39,7 +39,7 @@ export const updateNoteSchema = {
 	}),
 	[Segments.BODY]: Joi.object({
 		title: Joi.string().min(1).max(230),
-		content: Joi.string().min(0),
+		content: Joi.string().allow(""),
 		tag: Joi.string().valid(...TAGS),
 	}).min(1)
 }
@@ -48,7 +48,7 @@ export const getAllNotesSchema = {
 	[Segments.QUERY]: Joi.object({
 		page: Joi.number().integer().min(1).default(1),
 		perPage: Joi.number().integer().min(5).max(20).default(10),
-		search: Joi.string().min(0).max(30),
+		search: Joi.string().max(30).allow(""),
 		tag: Joi.string().valid(...TAGS),
 		sortBy: Joi.string().valid("_id", "title", "tag").default("_id"),
 		sortOrder: Joi.string().valid("asc", "desc").default("asc"),
