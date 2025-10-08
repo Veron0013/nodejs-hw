@@ -14,10 +14,17 @@ export const getAllNotes = async (req, res) => {
 
 	const skip = (page - 1) * perPage;
 
-	const notesQuery = Note.find();
+	let notesQuery = Note.find();
 
+	//if (search) {
+	//	notesQuery.where({ $text: { $search: search } });
+	//}
 	if (search) {
-		notesQuery.where({ $text: { $search: search } });
+		const regex = new RegExp(search, 'i');
+		notesQuery = notesQuery.or([
+			{ title: regex },
+			{ content: regex },
+		]);
 	}
 
 	if (tag) {
