@@ -14,23 +14,26 @@ export const getAllNotes = async (req, res) => {
 
 	const skip = (page - 1) * perPage;
 
-	const filter = {};
+	let notesQuery = Note.find();
 
+	//if (search) {
+	//	notesQuery.where({ $text: { $search: search } });
+	//}
 	if (search) {
-		filter.$or = [
-			{ title: { $regex: search, $options: "i" } },
-			{ content: { $regex: search, $options: "i" } }
-		];
+		const regex = new RegExp(search, 'i');
+		notesQuery = notesQuery.or([
+			{ title: regex },
+			{ content: regex },
+		]);
 	}
 
 	if (tag) {
-		filter.tag = tag;
+		notesQuery.where("tag").equals(tag);
 	}
 
 	const [totalNotes, notes] = await Promise.all([
-		Note.countDocuments(filter),
-		Note
-			.find(filter)
+		notesQuery.clone().countDocuments(),
+		notesQuery
 			.skip(skip)
 			.limit(Number(perPage))
 			.sort({ [sortBy]: sortOrder }),
