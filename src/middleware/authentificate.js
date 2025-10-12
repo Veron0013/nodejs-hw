@@ -1,33 +1,36 @@
 import createHttpError from "http-errors"
-import { Session } from "../models/session"
-import { User } from "../models/user"
+import { Session } from "../models/session.js"
+import { User } from "../models/user.js"
 
 
-export const authentificate = (error, req) => {
+export const authentificate = async (req, next) => {
 
 	const { accessToken } = req.cookies
 
 	if (!accessToken) {
-		return createHttpError(401, 'Missing access token')
+		return next(createHttpError(401, 'Missing access token'))
 	}
 
-	const session = Session.findOne({ accessToken })
+	const session = await Session.findOne({ accessToken })
 
 	if (!session) {
-		return createHttpError(401, 'Session not found')
+		return next(createHttpError(401, 'Session not found'))
 	}
 
-	const tokenValid = session.accessTokenValidUntil >= Date.now()
+	const isAccessTokenExpired = new Date(session.accessTokenValidUntil) < new Date()
 
-	if (!tokenValid) {
-		return createHttpError(401, 'Access token expired')
+	if (isAccessTokenExpired) {
+		return next(createHttpError(401, 'Access token expired'))
 	}
 
-	const user = User.findById(session.userId)
+	const user = await User.findById(session.userId)
 
 	if (!user) {
-		return createHttpError(401, 'Access token expired')
+		return next(createHttpError(401, 'Access denied'))
 	}
 
+	req.user = user
+
+	next()
 
 }
