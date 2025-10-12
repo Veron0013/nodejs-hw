@@ -17,7 +17,7 @@ const notesSchema = new Schema(
 			required: false,
 			enum: TAGS,
 			default: 'Todo',
-		},
+		}
 	}, {
 	timestamps: true,
 	//versionKey: false,
