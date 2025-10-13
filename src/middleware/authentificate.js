@@ -3,7 +3,7 @@ import { Session } from "../models/session.js"
 import { User } from "../models/user.js"
 
 
-export const authentificate = async (req, next) => {
+export const authentificate = async (req, res, next) => {
 
 	const { accessToken } = req.cookies
 
