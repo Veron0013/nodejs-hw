@@ -26,7 +26,7 @@ export const authenticate = async (req, res, next) => {
 	const user = await User.findById(session.userId)
 
 	if (!user) {
-		return next(createHttpError(401, 'Access denied'))
+		return next(createHttpError(401,))
 	}
 
 	req.user = user

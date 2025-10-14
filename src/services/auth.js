@@ -18,12 +18,13 @@ export const createSession = async (userId) => {
 export const setSessionCookies = (res, session) => {
 
 	const cookiesTypeDefault = (maxAge) => {
-		return {
+		const cookieType = {
 			httpOnly: true,
 			secure: true,
 			sameSite: 'none',
 			maxAge
 		}
+		return cookieType
 	}
 
 	res.cookie('accessToken', session.accessToken, cookiesTypeDefault(FIFTEEN_MINUTES))

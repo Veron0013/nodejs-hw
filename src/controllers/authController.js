@@ -21,7 +21,7 @@ export const registerUser = async (req, res, next) => {
 	const hashedPassword = await bcrypt.hash(password, 10)
 
 	const newUser = await User.create({
-		userName: email,
+		username: email,
 		email,
 		password: hashedPassword
 	})
@@ -29,7 +29,7 @@ export const registerUser = async (req, res, next) => {
 	const newSession = await createSession(newUser._id)
 	setSessionCookies(res, newSession)
 
-	res.status(201).json({ newUser })
+	res.status(201).json(newUser)
 }
 
 
@@ -77,7 +77,7 @@ export const logoutUser = async (req, res) => {
 export const refreshUserSession = async (req, res, next) => {
 
 	if (!req.cookies?.sessionId || !req.cookies?.refreshToken) {
-		return next(createHttpError(400, 'Error getting auth cookies'))
+		return next(createHttpError(400, 'Missing authentication cookies'))
 	}
 
 	const { sessionId, refreshToken } = req.cookies
