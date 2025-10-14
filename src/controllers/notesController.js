@@ -1,6 +1,6 @@
 
-import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
+import { Note } from '../models/note.js';
 
 export const getAllNotes = async (req, res) => {
 	const {
@@ -42,8 +42,8 @@ export const getAllNotes = async (req, res) => {
 	]);
 
 	res.status(200).json({
-		page: Number(page),
-		perPage: Number(perPage),
+		page: page,
+		perPage: perPage,
 		totalNotes,
 		totalPages: Math.ceil(totalNotes / perPage),
 		notes,
@@ -73,47 +73,38 @@ export const deleteNote = async (req, res, next) => {
 	const { noteId } = req.params;
 	const userId = req.user._id;
 
-	try {
-		const deletedNote = await Note.findOneAndDelete({
-			_id: noteId,
-			userId
-		});
+	const deletedNote = await Note.findOneAndDelete({
+		_id: noteId,
+		userId
+	});
 
-		if (!deletedNote) {
-			next(get404ById(noteId));
-			return;
-		}
-
-		res.status(200).json(deletedNote);
-	} catch (error) {
-		next(error)
+	if (!deletedNote) {
+		next(get404ById(noteId));
+		return;
 	}
+
+	res.status(200).json(deletedNote);
 };
 
 export const updateNote = async (req, res, next) => {
 	const { noteId } = req.params;
 	const userId = req.user._id;
 
-	try {
-		const updatedNote = await Note.findOneAndUpdate(
-			{
-				_id: noteId,
-				userId
-			},
-			req.body,
-			{ new: true },
-		);
+	const updatedNote = await Note.findOneAndUpdate(
+		{
+			_id: noteId,
+			userId
+		},
+		req.body,
+		{ new: true },
+	);
 
-		if (!updatedNote) {
-			next(get404ById(noteId));
-			return;
-		}
-
-		res.status(200).json(updatedNote);
-	} catch (error) {
-		next(error)
-
+	if (!updatedNote) {
+		next(get404ById(noteId));
+		return;
 	}
+
+	res.status(200).json(updatedNote);
 };
 
 const get404ById = (noteId) => {
