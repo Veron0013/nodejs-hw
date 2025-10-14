@@ -19,7 +19,7 @@ export const getAllNotes = async (req, res) => {
 	let notesQuery = Note.find({ userId });
 
 	if (search) {
-		notesQuery.where({ $text: { $search: search } });
+		notesQuery.where('$text').equals({ $search: search });
 	}
 	//if (search) {
 	//	const regex = new RegExp(search, 'i');
@@ -54,19 +54,14 @@ export const getNoteById = async (req, res, next) => {
 	const { noteId } = req.params;
 	const userId = req.user._id;
 
-	try {
-		const note = await Note.findOne({ _id: noteId, userId });
+	const note = await Note.findOne({ _id: noteId, userId });
 
-		if (!note) {
-			next(get404ById(noteId));
-			return;
-		}
-
-		res.status(200).json(note);
-	} catch (error) {
-		next(error)
+	if (!note) {
+		next(get404ById(noteId));
+		return;
 	}
 
+	res.status(200).json(note);
 };
 
 export const createNote = async (req, res) => {

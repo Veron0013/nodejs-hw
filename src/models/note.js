@@ -19,7 +19,7 @@ const notesSchema = new Schema(
 			default: 'Todo',
 		},
 		userId: {
-			type: String,
+			type: Schema.Types.ObjectId,
 			ref: 'User',
 			required: true,
 		}
