@@ -9,6 +9,7 @@ import { User } from "../models/user.js"
 import { createSession, setSessionCookies } from "../services/auth.js";
 import { Session } from "../models/session.js";
 import { sendMail } from "../utils/sendMail.js";
+import { logger } from "../middleware/logger.js";
 
 export const registerUser = async (req, res, next) => {
 
@@ -149,8 +150,20 @@ export const requestResetEmail = async (req, res, next) => {
 			subject: 'Reset your password',
 			html,
 		});
-	} catch {
+	} catch (error) {
+		//піно
+		logger.error(
+			{
+				err: error,
+				context: 'sendMail',
+				to: email,
+				message: error.message,
+			},
+			'Failed to send email'
+		);
+
 		next(createHttpError(500, 'Failed to send the email, please try again later.'));
+
 		return;
 	}
 
