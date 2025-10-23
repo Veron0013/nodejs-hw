@@ -139,7 +139,7 @@ export const requestResetEmail = async (req, res, next) => {
 	// 4. Формуємо із шаблона HTML документ з динамічними даними
 	const html = template({
 		name: user.username,
-		link: `${process.env.FRONTEND_DOMAIN}/reset-password?token=${resetToken}`,
+		link: `${process.env.FRONTEND_DOMAIN}/auth/reset-password?token=${resetToken}`,
 	});
 
 	try {
