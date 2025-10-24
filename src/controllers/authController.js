@@ -185,7 +185,7 @@ export const resetPassword = async (req, res) => {
 	const user = await User.findOne({ _id: payload.sub, email: payload.email })
 
 	if (!user) {
-		throw createHttpError(400, "user not found")
+		throw createHttpError(404, "user not found")
 	}
 
 	// 3. Якщо користувач існує 
