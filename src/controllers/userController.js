@@ -17,3 +17,15 @@ export const updateUserAvatar = async (req, res, next) => {
 
 	res.status(200).json({ url: user.avatar });
 }
+
+export const getUser = async (req, res) => {
+
+	const userId = req.user._id;
+	const user = await User.findOne({ _id: userId })
+
+	if (!user) {
+		throw createHttpError(404, "user not found")
+	}
+
+	res.status(200).json(user);
+};
