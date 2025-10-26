@@ -20,12 +20,12 @@ import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
 
-router.use('/api/notes', authenticate)
+router.use('/notes', authenticate)
 
-router.get('/api/notes', celebrate(getAllNotesSchema), getAllNotes);
-router.get('/api/notes/:noteId', celebrate(noteIdSchema), getNoteById);
-router.post('/api/notes', celebrate(createNoteSchema), createNote);
-router.delete('/api/notes/:noteId', celebrate(noteIdSchema), deleteNote);
-router.patch('/api/notes/:noteId', celebrate(updateNoteSchema), updateNote);
+router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
+router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteById);
+router.post('/notes', celebrate(createNoteSchema), createNote);
+router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
+router.patch('/notes/:noteId', celebrate(updateNoteSchema), updateNote);
 
 export default router;
