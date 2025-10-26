@@ -22,6 +22,7 @@ export const setSessionCookies = (res, session) => {
 			httpOnly: true,
 			secure: true,
 			sameSite: 'none',
+			path: "/",
 			maxAge
 		}
 		return cookieType
