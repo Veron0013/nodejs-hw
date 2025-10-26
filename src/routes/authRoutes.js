@@ -20,12 +20,12 @@ const router = Router();
 
 router.post('/api/auth/register', celebrate(registerUserSchema), registerUser)
 router.post('/api/auth/login', celebrate(loginUserSchema), loginUser)
-router.post('/auth/logout', logoutUser)
-router.post('/auth/refresh', refreshUserSession)
+router.post('/api/auth/logout', logoutUser)
+router.post('/api/auth/refresh', refreshUserSession)
 
-router.get('/auth/session', refreshUserSession)
+router.get('/api/auth/session', refreshUserSession)
 
-router.post('/auth/request-reset-email', celebrate(requestResetEmailSchema), requestResetEmail)
-router.post('/auth/reset-password', celebrate(resetPasswordSchema), resetPassword);
+router.post('/api/auth/request-reset-email', celebrate(requestResetEmailSchema), requestResetEmail)
+router.post('/api/auth/reset-password', celebrate(resetPasswordSchema), resetPassword);
 
 export default router;
