@@ -7,12 +7,14 @@ const notesSchema = new Schema(
 			type: String,
 			required: true,
 			trim: true,
-		}, content: {
+		},
+		content: {
 			type: String,
 			required: false,
 			default: '',
 			trim: true,
-		}, tag: {
+		},
+		tag: {
 			type: String,
 			required: false,
 			enum: TAGS,

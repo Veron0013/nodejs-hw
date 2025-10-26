@@ -2,16 +2,31 @@ import createHttpError from "http-errors"
 import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js"
 import { User } from "../models/user.js"
 
-export const updateUserAvatar = async (req, res, next) => {
-	if (!req.file) {
-		next(createHttpError(400, "No file"));
-		return;
+export const updateUserProfile = async (req, res) => {
+
+	const userId = req.user._id;
+
+	if (!userId) {
+		throw createHttpError(404, "user not found")
 	}
 
-	const result = await saveFileToCloudinary(req.file.buffer)
+	let avatar = req.user.avatar
+	let username = req.user.username
+
+	if (req.file) {
+		const result = await saveFileToCloudinary(req.file.buffer)
+		avatar = result.secure_url
+	}
+
+	if (req.body.username) {
+		username = req.body.username
+	}
 
 	const user = await User.findByIdAndUpdate(req.user._id,
-		{ avatar: result.secure_url },
+		{
+			avatar,
+			username
+		},
 		{ new: true }
 	)
 

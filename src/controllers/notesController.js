@@ -41,12 +41,17 @@ export const getAllNotes = async (req, res) => {
 			.sort({ [sortBy]: sortOrder }),
 	]);
 
+	const formattedNotes = notes.map(n => ({
+		...n.toObject(),
+		id: n._id.toString(),
+	}));
+
 	res.status(200).json({
 		page: page,
 		perPage: perPage,
 		totalNotes,
 		totalPages: Math.ceil(totalNotes / perPage),
-		notes,
+		notes: formattedNotes
 	});
 };
 

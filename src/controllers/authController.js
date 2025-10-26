@@ -37,7 +37,6 @@ export const registerUser = async (req, res, next) => {
 	res.status(201).json(newUser)
 }
 
-
 export const loginUser = async (req, res, next) => {
 	if (!req.body?.email || !req.body?.password) {
 		return next(createHttpError(400, 'Email and password required'))
@@ -66,10 +65,14 @@ export const loginUser = async (req, res, next) => {
 }
 
 export const logoutUser = async (req, res) => {
-	const { sessionId } = req.cookies
+	try {
+		const { sessionId } = req.cookies
 
-	if (sessionId) {
-		await Session.deleteOne({ _id: sessionId })
+		if (sessionId) {
+			await Session.deleteOne({ _id: sessionId })
+		}
+	} catch (error) {
+		console.error('Error deleting session:', error.message)
 	}
 
 	res.clearCookie('sessionId');
@@ -82,7 +85,11 @@ export const logoutUser = async (req, res) => {
 export const refreshUserSession = async (req, res, next) => {
 
 	if (!req.cookies?.sessionId || !req.cookies?.refreshToken) {
-		return next(createHttpError(400, 'Missing authentication cookies'))
+		res.clearCookie('sessionId');
+		res.clearCookie('accessToken');
+		res.clearCookie('refreshToken');
+
+		throw createHttpError(400, 'Invalid or expired refresh token')
 	}
 
 	const { sessionId, refreshToken } = req.cookies
@@ -113,7 +120,7 @@ export const refreshUserSession = async (req, res, next) => {
 	res.status(200).json({ message: 'Session refreshed', })
 }
 
-export const requestResetEmail = async (req, res, next) => {
+export const requestResetEmail = async (req, res) => {
 	const { email } = req.body
 
 	const user = await User.findOne({ email })
@@ -150,20 +157,7 @@ export const requestResetEmail = async (req, res, next) => {
 			html,
 		});
 	} catch (error) {
-		//піно
-		//logger.error(
-		//	{
-		//		err: error,
-		//		context: 'sendMail',
-		//		to: email,
-		//		message: error.message,
-		//	},
-		//	'Failed to send email'
-		//);
-
-		next(createHttpError(500, error));
-
-		return;
+		throw createHttpError(500, error);
 	}
 
 	res.status(200).json({
