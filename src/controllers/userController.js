@@ -30,7 +30,7 @@ export const updateUserProfile = async (req, res) => {
 		{ new: true }
 	)
 
-	res.status(200).json({ url: user.avatar });
+	res.status(200).json(user);
 }
 
 export const getUser = async (req, res) => {
