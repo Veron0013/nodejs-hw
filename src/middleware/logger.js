@@ -2,7 +2,7 @@ import pino from 'pino-http';
 
 export const logger = pino({
 	level: "info",
-	customProps: (req, res) => {
+	customProps: (req) => {
 		return {
 			ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress,
 			user: req.user?.username || "guest",
