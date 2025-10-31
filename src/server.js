@@ -12,12 +12,10 @@ import { errors } from 'celebrate';
 import notesRoutes from './routes/notesRoutes.js';
 import authRoutes from './routes/authRoutes.js'
 import userRoutes from './routes/userRoutes.js';
+import { setupSwagger } from './swagger.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
-
-//
-//const PORT = process.env.PORT ?? 3030;
 
 app.use(express.json());
 app.use(
@@ -27,6 +25,10 @@ app.use(
 	})
 )
 app.use(cookieParser());
+
+//swagger
+setupSwagger(app);
+//app.use("/api", userApiRoutes);
 
 app.use(logger);
 app.use(authRoutes);
